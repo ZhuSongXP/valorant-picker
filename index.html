@@ -376,7 +376,10 @@
             if (weaponResult.style.opacity === '1') {
                 const typeEl = document.getElementById('weapon-type');
                 const currentText = typeEl.textContent;
-                const pairs = {"步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun", "霰弹枪": "Shotgun", "冲锋枪": "SMG", "手枪": "Pistol"};
+                const pairs = {
+                    "手枪": "Pistol", "冲锋枪": "SMG", "霰弹枪": "Shotgun",
+                    "步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun"
+                };
                 for (const [zh, en] of Object.entries(pairs)) {
                     if (currentText === zh || currentText === en) {
                         typeEl.textContent = lang === 'zh' ? zh : en;
@@ -386,8 +389,9 @@
             }
         }
 
-        // ========== DATA ==========
+        // ========== AGENTS DATA ==========
         const agents = [
+            // Duelist - 8
             { nameZh: "捷风", nameEn: "Jett", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Jett.png" },
             { nameZh: "不死鸟", nameEn: "Phoenix", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Phoenix.png" },
             { nameZh: "芮娜", nameEn: "Reyna", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Reyna.png" },
@@ -396,6 +400,7 @@
             { nameZh: "霓虹", nameEn: "Neon", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Neon.png" },
             { nameZh: "壹决", nameEn: "Iso", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Iso.png" },
             { nameZh: "维赖", nameEn: "Waylay", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Waylay.png" },
+            // Initiator - 7
             { nameZh: "猎枭", nameEn: "Sova", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Sova.png" },
             { nameZh: "铁臂", nameEn: "Breach", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Breach.png" },
             { nameZh: "斯凯", nameEn: "Skye", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Skye.png" },
@@ -403,6 +408,7 @@
             { nameZh: "黑梦", nameEn: "Fade", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Fade.png" },
             { nameZh: "盖可", nameEn: "Gekko", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Gekko.png" },
             { nameZh: "钛狐", nameEn: "Tejo", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Tejo.png" },
+            // Controller - 7
             { nameZh: "炼狱", nameEn: "Brimstone", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Brimstone.png" },
             { nameZh: "蝰蛇", nameEn: "Viper", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Viper.png" },
             { nameZh: "幽影", nameEn: "Omen", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Omen.png" },
@@ -410,6 +416,7 @@
             { nameZh: "海神", nameEn: "Harbor", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Harbor.png" },
             { nameZh: "暮蝶", nameEn: "Clove", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Clove.png" },
             { nameZh: "米克丝", nameEn: "Miks", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Miks.png" },
+            // Sentinel - 7
             { nameZh: "贤者", nameEn: "Sage", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Sage.png" },
             { nameZh: "奇乐", nameEn: "Killjoy", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Killjoy.png" },
             { nameZh: "零", nameEn: "Cypher", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Cypher.png" },
@@ -419,26 +426,34 @@
             { nameZh: "维托", nameEn: "Veto", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Veto.png" }
         ];
 
+        // ========== WEAPONS DATA - CN OFFICIAL NAMES ==========
+        // Categories kept as: 手枪, 冲锋枪, 霰弹枪, 步枪, 狙击枪, 机枪
         const weapons = [
-            { name: "Vandal", nameZh: "狂徒", nameEn: "Vandal", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Vandal.png" },
-            { name: "Phantom", nameZh: "幻影", nameEn: "Phantom", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Phantom.png" },
-            { name: "Bulldog", nameZh: "斗牛犬", nameEn: "Bulldog", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Bulldog.png" },
-            { name: "Guardian", nameZh: "捍卫者", nameEn: "Guardian", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Guardian.png" },
-            { name: "Operator", nameZh: "间谍", nameEn: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
-            { name: "Marshal", nameZh: "警长", nameEn: "Marshal", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Marshal.png" },
-            { name: "Outlaw", nameZh: "亡命之徒", nameEn: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
-            { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" },
-            { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
-            { name: "Judge", nameZh: "判官", nameEn: "Judge", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Judge.png" },
-            { name: "Bucky", nameZh: "雄鹿", nameEn: "Bucky", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Bucky.png" },
-            { name: "Spectre", nameZh: "幽灵", nameEn: "Spectre", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Spectre.png" },
-            { name: "Stinger", nameZh: "刺痛", nameEn: "Stinger", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Stinger.png" },
-            { name: "Classic", nameZh: "经典", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
-            { name: "Ghost", nameZh: "鬼魅", nameEn: "Ghost", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Ghost.png" },
-            { name: "Sheriff", nameZh: "神射", nameEn: "Sheriff", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Sheriff.png" },
+            // 手枪 / Pistol
+            { name: "Classic", nameZh: "标配", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
+            { name: "Shorty", nameZh: "短炮", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
             { name: "Frenzy", nameZh: "狂怒", nameEn: "Frenzy", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Frenzy.png" },
-            { name: "Shorty", nameZh: "短管", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
-            { name: "Bandit", nameZh: "匪徒", nameEn: "Bandit", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Bandit.png" }
+            { name: "Ghost", nameZh: "鬼魅", nameEn: "Ghost", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Ghost.png" },
+            { name: "Sheriff", nameZh: "正义", nameEn: "Sheriff", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Sheriff.png" },
+            { name: "Bandit", nameZh: "追猎", nameEn: "Bandit", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Bandit.png" },
+            // 冲锋枪 / SMG
+            { name: "Stinger", nameZh: "蜂刺", nameEn: "Stinger", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Stinger.png" },
+            { name: "Spectre", nameZh: "骇灵", nameEn: "Spectre", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Spectre.png" },
+            // 霰弹枪 / Shotgun
+            { name: "Bucky", nameZh: "雄鹿", nameEn: "Bucky", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Bucky.png" },
+            { name: "Judge", nameZh: "判官", nameEn: "Judge", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Judge.png" },
+            // 步枪 / Rifle
+            { name: "Bulldog", nameZh: "獠犬", nameEn: "Bulldog", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Bulldog.png" },
+            { name: "Guardian", nameZh: "戍卫", nameEn: "Guardian", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Guardian.png" },
+            { name: "Phantom", nameZh: "幻影", nameEn: "Phantom", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Phantom.png" },
+            { name: "Vandal", nameZh: "狂徒", nameEn: "Vandal", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Vandal.png" },
+            // 狙击枪 / Sniper
+            { name: "Marshal", nameZh: "飞将", nameEn: "Marshal", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Marshal.png" },
+            { name: "Outlaw", nameZh: "莽侠", nameEn: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
+            { name: "Operator", nameZh: "冥驹", nameEn: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
+            // 机枪 / Machine Gun
+            { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
+            { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" }
         ];
 
         // ========== PARTICLE SYSTEM ==========
@@ -476,7 +491,6 @@
             const name = document.getElementById(nameId);
             const type = document.getElementById(typeId);
             
-            // Reset states
             placeholder.classList.add('hidden');
             result.classList.add('hidden');
             flipCard.classList.remove('flipped');
@@ -484,10 +498,8 @@
             textResult.classList.remove('result-pop');
             shine.classList.remove('active');
             
-            // Show reel
             reel.classList.remove('hidden');
             
-            // Build reel strip with random items
             let stripHTML = '';
             for (let i = 0; i < 20; i++) {
                 const item = list[Math.floor(Math.random() * list.length)];
@@ -496,7 +508,6 @@
             reelStrip.innerHTML = stripHTML;
             reelStrip.style.transform = 'translateY(0)';
             
-            // Animate reel
             const speed = 30;
             const totalScroll = 260 * 15;
             let currentScroll = 0;
@@ -508,29 +519,23 @@
                 if (currentScroll < totalScroll) {
                     requestAnimationFrame(animateReel);
                 } else {
-                    // Stop reel, show result
                     reel.classList.add('hidden');
                     result.classList.remove('hidden');
                     
                     const final = list[Math.floor(Math.random() * list.length)];
                     img.src = final.img;
                     
-                    // Trigger flip
                     setTimeout(() => {
                         flipCard.classList.add('flipped');
                         shine.classList.add('active');
-                        
-                        // Particles
                         createParticles(particleId, particleColor);
                         
-                        // Show text after flip
                         setTimeout(() => {
                             if (isAgent) {
                                 name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
                                 type.textContent = currentLang === 'zh' ? final.roleZh : final.roleEn;
                                 type.className = 'role-badge ' + final.roleClass;
                             } else {
-                                // Weapon: show name + type
                                 const weaponName = currentLang === 'zh' ? final.nameZh : final.nameEn;
                                 const weaponType = currentLang === 'zh' ? final.typeZh : final.typeEn;
                                 name.textContent = weaponName;
