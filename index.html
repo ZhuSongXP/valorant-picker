@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant 随机抽英雄 & 武器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%); }
+        .glow-bar { height: 6px; }
+        .result-enter {
+            animation: slideUpFade 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spin-anim {
+            animation: spinBlur 0.15s ease-in-out;
+        }
+        @keyframes spinBlur {
+            0% { filter: blur(0px); transform: scale(1); }
+            50% { filter: blur(2px); transform: scale(1.05); }
+            100% { filter: blur(0px); transform: scale(1); }
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .role-duelist { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .role-initiator { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .role-controller { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .role-sentinel { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+    </style>
+</head>
+<body class="min-h-screen text-white py-8">
+    <div class="max-w-6xl mx-auto px-6">
+        <h1 class="text-7xl font-black text-center text-red-500 mb-2">VALORANT</h1>
+        <p class="text-center text-3xl mb-12">随机抽取器</p>
+
+        <div class="grid md:grid-cols-2 gap-10">
+            <!-- 英雄 -->
+            <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-red-500/30">
+                <div class="glow-bar" style="background: linear-gradient(90deg, #ef4444, #f59e0b);"></div>
+                <div class="p-8">
+                    <h2 class="text-4xl font-bold text-center mb-8">🧍 随机英雄</h2>
+                    <div id="agent-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl">
+                        <div id="agent-placeholder" class="text-center">
+                            <div class="text-8xl mb-6">❓</div>
+                            <p class="text-gray-400">准备好了吗？</p>
+                        </div>
+                        <div id="agent-result" class="hidden text-center result-enter">
+                            <img id="agent-image" class="mx-auto rounded-2xl mb-6" style="width:260px;height:260px;object-fit:contain" alt="">
+                            <h3 id="agent-name" class="text-5xl font-black"></h3>
+                            <div id="agent-role" class="role-badge"></div>
+                        </div>
+                    </div>
+                    <button onclick="randomAgent()" class="w-full mt-8 bg-red-600 hover:bg-red-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer">抽取英雄</button>
+                </div>
+            </div>
+
+            <!-- 武器 -->
+            <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-amber-500/30">
+                <div class="glow-bar" style="background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+                <div class="p-8">
+                    <h2 class="text-4xl font-bold text-center mb-8">🔫 随机武器</h2>
+                    <div id="weapon-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl">
+                        <div id="weapon-placeholder" class="text-center">
+                            <div class="text-8xl mb-6">🎯</div>
+                            <p class="text-gray-400">准备好了吗？</p>
+                        </div>
+                        <div id="weapon-result" class="hidden text-center result-enter">
+                            <img id="weapon-image" class="mx-auto rounded-2xl mb-6" style="width:260px;height:260px;object-fit:contain" alt="">
+                            <h3 id="weapon-name" class="text-5xl font-black"></h3>
+                            <p id="weapon-type" class="text-amber-400 text-2xl mt-2"></p>
+                        </div>
+                    </div>
+                    <button onclick="randomWeapon()" class="w-full mt-8 bg-amber-600 hover:bg-amber-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer">抽取武器</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12">
+            <button onclick="randomBoth()" 
+                    class="bg-white text-black px-20 py-8 rounded-3xl text-3xl font-black hover:bg-yellow-300 transition-all cursor-pointer">
+                ⚡ 同时抽取
+            </button>
+        </div>
+
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>包含全部 29 位英雄 & 19 种武器</p>
+        </div>
+    </div>
+
+    <script>
+        const agents = [
+            // 决斗 (Duelist) - 8位
+            { name: "Jett", role: "决斗", roleClass: "role-duelist", img: "agents/Jett.png" },
+            { name: "Phoenix", role: "决斗", roleClass: "role-duelist", img: "agents/Phoenix.png" },
+            { name: "Reyna", role: "决斗", roleClass: "role-duelist", img: "agents/Reyna.png" },
+            { name: "Raze", role: "决斗", roleClass: "role-duelist", img: "agents/Raze.png" },
+            { name: "Yoru", role: "决斗", roleClass: "role-duelist", img: "agents/Yoru.png" },
+            { name: "Neon", role: "决斗", roleClass: "role-duelist", img: "agents/Neon.png" },
+            { name: "Iso", role: "决斗", roleClass: "role-duelist", img: "agents/Iso.png" },
+            { name: "Waylay", role: "决斗", roleClass: "role-duelist", img: "agents/Waylay.png" },
+
+            // 先锋 (Initiator) - 7位
+            { name: "Sova", role: "先锋", roleClass: "role-initiator", img: "agents/Sova.png" },
+            { name: "Breach", role: "先锋", roleClass: "role-initiator", img: "agents/Breach.png" },
+            { name: "Skye", role: "先锋", roleClass: "role-initiator", img: "agents/Skye.png" },
+            { name: "KAY/O", role: "先锋", roleClass: "role-initiator", img: "agents/KAYO.png" },
+            { name: "Fade", role: "先锋", roleClass: "role-initiator", img: "agents/Fade.png" },
+            { name: "Gekko", role: "先锋", roleClass: "role-initiator", img: "agents/Gekko.png" },
+            { name: "Tejo", role: "先锋", roleClass: "role-initiator", img: "agents/Tejo.png" },
+
+            // 控场 (Controller) - 7位
+            { name: "Brimstone", role: "控场", roleClass: "role-controller", img: "agents/Brimstone.png" },
+            { name: "Viper", role: "控场", roleClass: "role-controller", img: "agents/Viper.png" },
+            { name: "Omen", role: "控场", roleClass: "role-controller", img: "agents/Omen.png" },
+            { name: "Astra", role: "控场", roleClass: "role-controller", img: "agents/Astra.png" },
+            { name: "Harbor", role: "控场", roleClass: "role-controller", img: "agents/Harbor.png" },
+            { name: "Clove", role: "控场", roleClass: "role-controller", img: "agents/Clove.png" },
+            { name: "Miks", role: "控场", roleClass: "role-controller", img: "agents/Miks.png" },
+
+            // 哨位 (Sentinel) - 7位
+            { name: "Sage", role: "哨位", roleClass: "role-sentinel", img: "agents/Sage.png" },
+            { name: "Killjoy", role: "哨位", roleClass: "role-sentinel", img: "agents/Killjoy.png" },
+            { name: "Cypher", role: "哨位", roleClass: "role-sentinel", img: "agents/Cypher.png" },
+            { name: "Chamber", role: "哨位", roleClass: "role-sentinel", img: "agents/Chamber.png" },
+            { name: "Deadlock", role: "哨位", roleClass: "role-sentinel", img: "agents/Deadlock.png" },
+            { name: "Vyse", role: "哨位", roleClass: "role-sentinel", img: "agents/Vyse.png" },
+            { name: "Veto", role: "哨位", roleClass: "role-sentinel", img: "agents/Veto.png" }
+        ];
+
+        const weapons = [
+            // 步枪
+            { name: "Vandal", type: "步枪", img: "weapons/Vandal.png" },
+            { name: "Phantom", type: "步枪", img: "weapons/Phantom.png" },
+            { name: "Bulldog", type: "步枪", img: "weapons/Bulldog.png" },
+            { name: "Guardian", type: "步枪", img: "weapons/Guardian.png" },
+
+            // 狙击枪
+            { name: "Operator", type: "狙击枪", img: "weapons/Operator.png" },
+            { name: "Marshal", type: "狙击枪", img: "weapons/Marshal.png" },
+            { name: "Outlaw", type: "狙击枪", img: "weapons/Outlaw.png" },
+
+            // 机枪
+            { name: "Odin", type: "机枪", img: "weapons/Odin.png" },
+            { name: "Ares", type: "机枪", img: "weapons/Ares.png" },
+
+            // 霰弹枪
+            { name: "Judge", type: "霰弹枪", img: "weapons/Judge.png" },
+            { name: "Bucky", type: "霰弹枪", img: "weapons/Bucky.png" },
+
+            // 冲锋枪
+            { name: "Spectre", type: "冲锋枪", img: "weapons/Spectre.png" },
+            { name: "Stinger", type: "冲锋枪", img: "weapons/Stinger.png" },
+
+            // 手枪
+            { name: "Classic", type: "手枪", img: "weapons/Classic.png" },
+            { name: "Ghost", type: "手枪", img: "weapons/Ghost.png" },
+            { name: "Sheriff", type: "手枪", img: "weapons/Sheriff.png" },
+            { name: "Frenzy", type: "手枪", img: "weapons/Frenzy.png" },
+            { name: "Shorty", type: "手枪", img: "weapons/Shorty.png" },
+            { name: "Bandit", type: "手枪", img: "weapons/Bandit.png" }
+        ];
+
+        function spin(displayId, resultId, imgId, nameId, typeId, list, isAgent) {
+            const display = document.getElementById(displayId);
+            const placeholder = display.querySelector('[id*="placeholder"]');
+            const result = document.getElementById(resultId);
+            const img = document.getElementById(imgId);
+            const name = document.getElementById(nameId);
+            const type = document.getElementById(typeId);
+
+            placeholder.classList.add('hidden');
+            result.classList.add('hidden');
+            result.classList.remove('result-enter');
+
+            let i = 0;
+            const interval = setInterval(() => {
+                const item = list[Math.floor(Math.random() * list.length)];
+                img.src = item.img;
+                img.classList.add('spin-anim');
+                setTimeout(() => img.classList.remove('spin-anim'), 150);
+                i++;
+                if (i > 12) {
+                    clearInterval(interval);
+                    const final = list[Math.floor(Math.random() * list.length)];
+                    img.src = final.img;
+                    name.textContent = final.name;
+                    if (isAgent) {
+                        type.textContent = final.role;
+                        type.className = 'role-badge ' + final.roleClass;
+                    } else {
+                        type.textContent = final.type;
+                    }
+                    result.classList.remove('hidden');
+                    void result.offsetWidth;
+                    result.classList.add('result-enter');
+                }
+            }, 100);
+        }
+
+        function randomAgent() {
+            spin('agent-display', 'agent-result', 'agent-image', 'agent-name', 'agent-role', agents, true);
+        }
+
+        function randomWeapon() {
+            spin('weapon-display', 'weapon-result', 'weapon-image', 'weapon-name', 'weapon-type', weapons, false);
+        }
+
+        function randomBoth() {
+            randomAgent();
+            setTimeout(() => {
+                randomWeapon();
+            }, 700);
+        }
+    </script>
+</body>
+</html>
