@@ -1,7 +1,11 @@
 Valorant Random Picker | 无畏契约随机抽取器
+
 EN: A beautiful, interactive random picker tool for Valorant, supporting random agent, full weapon, and pistol round (pistol + melee) selection with smooth slot machine animation, flip card effect, particle burst and sound feedback.
+
 中文: 一款高颜值、交互式无畏契约随机抽取工具，支持随机英雄、全武器、手枪局（手枪+近战刀）抽取，内置老虎机滚动、卡片翻转、粒子爆炸、音效反馈等动态效果。
+
 ✨ Features | 功能特点
+
 - Random Agent Pick / 随机英雄抽取 — Randomly select from all 29 Valorant agents with complete role tags (Duelist / Initiator / Controller / Sentinel)｜包含全部29名英雄，自动匹配决斗、先锋、控场、哨位定位标签
 - Full Weapon Pick / 全武器抽取 — Cover all official weapons + melee knife｜囊括全部官方武器及近战刀
 - Pistol Round Pick / 手枪局专属抽取 — Exclusive pistol + melee random pick for eco rounds｜专为经济局设计，随机抽取手枪或近战刀
@@ -9,6 +13,7 @@ EN: A beautiful, interactive random picker tool for Valorant, supporting random 
 - Smooth Animations / 流畅动画 — Slot rolling, card flip, shine highlight, particle burst pop effect｜老虎机滚动、卡片翻转、高光扫光、粒子爆开特效
 - Built-in Sound FX / 音效系统 — Tick, flip, win and click sounds with toggle switch｜内置全套交互音效，支持一键开关
 - Modern UI / 现代化界面 — Dark theme with gradient glow pulse effects, fully responsive layout｜暗黑赛博主题，渐变流光呼吸特效，全设备自适应
+
 🖼 Preview | 项目预览
 EN: Independent 3-card picking layout with exclusive color glow for each module.
 中文: 三卡片独立抽取布局，每个模块拥有专属主题流光特效：
@@ -17,6 +22,7 @@ EN: Independent 3-card picking layout with exclusive color glow for each module.
 - Pistol Round Module (Green glow)｜手枪局模块（绿色流光）
 EN: Support one-click pick both agent & weapon for fast matching.
 中文: 支持一键同时抽取英雄+武器，快速搭配对局组合。
+
 📁 Project Structure | 项目结构
 ./
 ├── index.html       # Main entry & all code (HTML/CSS/JS integrated) 主程序入口
