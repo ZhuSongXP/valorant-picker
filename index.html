@@ -97,6 +97,90 @@
         .flip-card-back.weapon-back {
             border-color: #f59e0b;
         }
+        .flip-card-back.pistol-back {
+            border-color: #22c55e;
+        }
+
+        /* ========== WHEEL SPINNER ========== */
+        .wheel-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            border: 4px solid #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+        }
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            overflow: hidden;
+            border-radius: 0 0 100% 0;
+        }
+        .wheel-segment-inner {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            left: 0;
+            top: 0;
+            transform-origin: 50% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wheel-segment img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            transform: rotate(-90deg);
+        }
+        .wheel-segment-text {
+            position: absolute;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            transform-origin: center;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #22c55e;
+            z-index: 20;
+            filter: drop-shadow(0 0 10px rgba(34,197,94,0.8));
+        }
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 3px solid #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(34,197,94,0.4);
+        }
 
         /* ========== RESULT ANIMATIONS ========== */
         .result-pop {
@@ -122,6 +206,13 @@
         @keyframes glowPulseAmber {
             0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
             50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(245, 158, 11, 0.2); }
+        }
+        .glow-pulse-green {
+            animation: glowPulseGreen 2s ease-in-out infinite;
+        }
+        @keyframes glowPulseGreen {
+            0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.2); }
         }
 
         /* ========== PARTICLE EFFECT ========== */
@@ -239,7 +330,7 @@
     </style>
 </head>
 <body class="min-h-screen text-white py-8">
-    <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-7xl mx-auto px-6">
         <!-- Language Toggle -->
         <div class="flex justify-end mb-4">
             <div class="flex gap-2 bg-zinc-800/50 rounded-full p-1">
@@ -251,17 +342,17 @@
         <h1 class="text-7xl font-black text-center text-red-500 mb-2">VALORANT</h1>
         <p class="text-center text-3xl mb-12" data-i18n="subtitle">随机抽取器</p>
 
-        <div class="grid md:grid-cols-2 gap-10">
+        <div class="grid md:grid-cols-3 gap-8">
             <!-- 英雄 -->
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-red-500/30">
                 <div class="glow-bar" style="background: linear-gradient(90deg, #ef4444, #f59e0b);"></div>
-                <div class="p-8">
-                    <h2 class="text-4xl font-bold text-center mb-8" data-i18n="agentTitle">🧍 随机英雄</h2>
-                    <div id="agent-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-6" data-i18n="agentTitle">🧍 随机英雄</h2>
+                    <div id="agent-display" class="min-h-[360px] flex items-center justify-center bg-black/40 rounded-2xl relative">
                         <div id="agent-particles" class="particles"></div>
                         <div id="agent-placeholder" class="text-center">
-                            <div class="text-8xl mb-6">❓</div>
-                            <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
+                            <div class="text-7xl mb-4">❓</div>
+                            <p class="text-gray-400 text-sm" data-i18n="ready">准备好了吗？</p>
                         </div>
                         <div id="agent-reel" class="hidden reel-container">
                             <div id="agent-reel-strip" class="reel-strip"></div>
@@ -270,33 +361,33 @@
                             <div class="flip-card" id="agent-flip-card">
                                 <div class="flip-card-inner">
                                     <div class="flip-card-front">
-                                        <div class="text-6xl">❓</div>
+                                        <div class="text-5xl">❓</div>
                                     </div>
                                     <div class="flip-card-back glow-pulse shine-effect" id="agent-shine">
-                                        <img id="agent-image" class="w-[200px] h-[200px] object-contain mb-2" alt="">
+                                        <img id="agent-image" class="w-[160px] h-[160px] object-contain mb-2" alt="">
                                     </div>
                                 </div>
                             </div>
-                            <div id="agent-text-result" class="text-center mt-4" style="opacity:0;">
-                                <h3 id="agent-name" class="text-5xl font-black"></h3>
+                            <div id="agent-text-result" class="text-center mt-3" style="opacity:0;">
+                                <h3 id="agent-name" class="text-4xl font-black"></h3>
                                 <div id="agent-role" class="role-badge"></div>
                             </div>
                         </div>
                     </div>
-                    <button onclick="randomAgent()" class="w-full mt-8 bg-red-600 hover:bg-red-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer" data-i18n="pickAgent">抽取英雄</button>
+                    <button onclick="randomAgent()" class="w-full mt-6 bg-red-600 hover:bg-red-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer" data-i18n="pickAgent">抽取英雄</button>
                 </div>
             </div>
 
             <!-- 武器 -->
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-amber-500/30">
                 <div class="glow-bar" style="background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
-                <div class="p-8">
-                    <h2 class="text-4xl font-bold text-center mb-8" data-i18n="weaponTitle">🔫 随机武器</h2>
-                    <div id="weapon-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-6" data-i18n="weaponTitle">🔫 随机武器</h2>
+                    <div id="weapon-display" class="min-h-[360px] flex items-center justify-center bg-black/40 rounded-2xl relative">
                         <div id="weapon-particles" class="particles"></div>
                         <div id="weapon-placeholder" class="text-center">
-                            <div class="text-8xl mb-6">🎯</div>
-                            <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
+                            <div class="text-7xl mb-4">🎯</div>
+                            <p class="text-gray-400 text-sm" data-i18n="ready">准备好了吗？</p>
                         </div>
                         <div id="weapon-reel" class="hidden reel-container">
                             <div id="weapon-reel-strip" class="reel-strip"></div>
@@ -305,33 +396,67 @@
                             <div class="flip-card" id="weapon-flip-card">
                                 <div class="flip-card-inner">
                                     <div class="flip-card-front">
-                                        <div class="text-6xl">🎯</div>
+                                        <div class="text-5xl">🎯</div>
                                     </div>
                                     <div class="flip-card-back weapon-back glow-pulse-amber shine-effect" id="weapon-shine">
-                                        <img id="weapon-image" class="w-[200px] h-[200px] object-contain mb-2" alt="">
+                                        <img id="weapon-image" class="w-[160px] h-[160px] object-contain mb-2" alt="">
                                     </div>
                                 </div>
                             </div>
-                            <div id="weapon-text-result" class="text-center mt-4" style="opacity:0;">
-                                <h3 id="weapon-name" class="text-5xl font-black"></h3>
-                                <p id="weapon-type" class="text-amber-400 text-2xl mt-2"></p>
+                            <div id="weapon-text-result" class="text-center mt-3" style="opacity:0;">
+                                <h3 id="weapon-name" class="text-4xl font-black"></h3>
+                                <p id="weapon-type" class="text-amber-400 text-xl mt-1"></p>
                             </div>
                         </div>
                     </div>
-                    <button onclick="randomWeapon()" class="w-full mt-8 bg-amber-600 hover:bg-amber-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer" data-i18n="pickWeapon">抽取武器</button>
+                    <button onclick="randomWeapon()" class="w-full mt-6 bg-amber-600 hover:bg-amber-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer" data-i18n="pickWeapon">抽取武器</button>
+                </div>
+            </div>
+
+            <!-- 手枪局转盘 -->
+            <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-green-500/30">
+                <div class="glow-bar" style="background: linear-gradient(90deg, #22c55e, #4ade80);"></div>
+                <div class="p-6">
+                    <h2 class="text-3xl font-bold text-center mb-6">🔫 手枪局转盘</h2>
+                    <div id="pistol-display" class="min-h-[360px] flex flex-col items-center justify-center bg-black/40 rounded-2xl relative">
+                        <div id="pistol-particles" class="particles"></div>
+
+                        <!-- Placeholder -->
+                        <div id="pistol-placeholder" class="text-center">
+                            <div class="text-7xl mb-4">🎲</div>
+                            <p class="text-gray-400 text-sm">手枪局选什么？</p>
+                        </div>
+
+                        <!-- Wheel -->
+                        <div id="pistol-wheel-container" class="wheel-container hidden">
+                            <div class="wheel-pointer"></div>
+                            <div id="pistol-wheel" class="wheel"></div>
+                            <div class="wheel-center">🔫</div>
+                        </div>
+
+                        <!-- Result -->
+                        <div id="pistol-result" class="hidden text-center mt-4">
+                            <div class="glow-pulse-green rounded-2xl p-4 bg-black/60">
+                                <img id="pistol-image" class="w-[120px] h-[120px] object-contain mx-auto mb-2" alt="">
+                            </div>
+                            <h3 id="pistol-name" class="text-4xl font-black mt-3"></h3>
+                            <p id="pistol-type" class="text-green-400 text-xl mt-1"></p>
+                        </div>
+                    </div>
+                    <button onclick="spinPistolWheel()" class="w-full mt-6 bg-green-600 hover:bg-green-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer">转动手枪局转盘</button>
                 </div>
             </div>
         </div>
 
-        <div class="text-center mt-12">
+        <div class="text-center mt-10">
             <button onclick="randomBoth()" 
-                    class="bg-white text-black px-20 py-8 rounded-3xl text-3xl font-black hover:bg-yellow-300 transition-all cursor-pointer"
+                    class="bg-white text-black px-16 py-6 rounded-3xl text-2xl font-black hover:bg-yellow-300 transition-all cursor-pointer"
                     data-i18n="pickBoth">
-                ⚡ 同时抽取
+                ⚡ 同时抽取英雄&武器
             </button>
         </div>
 
-        <div class="text-center mt-8 text-gray-500 text-sm">
+        <div class="text-center mt-6 text-gray-500 text-sm">
             <p data-i18n="footer">包含全部 29 位英雄 & 19 种武器</p>
         </div>
     </div>
@@ -368,7 +493,6 @@
             }
         }
 
-        // Play a tick sound (for slot machine spinning)
         function playTick() {
             if (!soundEnabled || !audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -384,7 +508,6 @@
             osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // Play a flip sound
         function playFlip() {
             if (!soundEnabled || !audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -400,10 +523,8 @@
             osc.stop(audioCtx.currentTime + 0.2);
         }
 
-        // Play a win/reveal sound
         function playWin() {
             if (!soundEnabled || !audioCtx) return;
-            // Chord: C-E-G
             const freqs = [523.25, 659.25, 783.99];
             freqs.forEach((freq, i) => {
                 const osc = audioCtx.createOscillator();
@@ -420,7 +541,6 @@
             });
         }
 
-        // Play a click sound
         function playClick() {
             if (!soundEnabled || !audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -435,6 +555,35 @@
             osc.stop(audioCtx.currentTime + 0.08);
         }
 
+        function playWheelTick() {
+            if (!soundEnabled || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600 + Math.random() * 400, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        function playWheelStop() {
+            if (!soundEnabled || !audioCtx) return;
+            // Ding sound
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
         // ========== BILINGUAL DATA ==========
         const i18n = {
             zh: {
@@ -444,7 +593,7 @@
                 ready: "准备好了吗？",
                 pickAgent: "抽取英雄",
                 pickWeapon: "抽取武器",
-                pickBoth: "⚡ 同时抽取",
+                pickBoth: "⚡ 同时抽取英雄&武器",
                 footer: "包含全部 29 位英雄 & 19 种武器"
             },
             en: {
@@ -533,7 +682,7 @@
             { nameZh: "维托", nameEn: "Veto", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Veto.png" }
         ];
 
-        // ========== WEAPONS DATA - CN OFFICIAL NAMES ==========
+        // ========== WEAPONS DATA ==========
         const weapons = [
             { name: "Classic", nameZh: "标配", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
             { name: "Shorty", nameZh: "短炮", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
@@ -555,6 +704,9 @@
             { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
             { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" }
         ];
+
+        // ========== PISTOL ONLY DATA ==========
+        const pistols = weapons.filter(w => w.typeZh === "手枪");
 
         // ========== PARTICLE SYSTEM ==========
         function createParticles(containerId, color) {
@@ -620,7 +772,6 @@
                 currentScroll += speed;
                 reelStrip.style.transform = `translateY(-${currentScroll % (260 * 20)}px)`;
 
-                // Play tick sound every few frames
                 tickCounter++;
                 if (tickCounter % 3 === 0) {
                     playTick();
@@ -686,6 +837,89 @@
             setTimeout(() => {
                 randomWeapon();
             }, 800);
+        }
+
+        // ========== PISTOL WHEEL ==========
+        let wheelRotation = 0;
+        let isWheelSpinning = false;
+
+        function buildWheel() {
+            const wheel = document.getElementById('pistol-wheel');
+            const count = pistols.length;
+            const anglePerSegment = 360 / count;
+            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7'];
+
+            let html = '';
+            pistols.forEach((pistol, i) => {
+                const rotation = i * anglePerSegment;
+                const color = colors[i % colors.length];
+                html += `
+                    <div class="wheel-segment" style="transform: rotate(${rotation}deg);">
+                        <div class="wheel-segment-inner" style="background: ${color}20; border-right: 2px solid ${color}40;">
+                            <img src="${pistol.img}" style="transform: rotate(${-rotation - anglePerSegment/2}deg) translateX(30px);" alt="">
+                        </div>
+                    </div>
+                `;
+            });
+            wheel.innerHTML = html;
+        }
+
+        function spinPistolWheel() {
+            if (isWheelSpinning) return;
+            isWheelSpinning = true;
+            initAudio();
+            playClick();
+
+            const placeholder = document.getElementById('pistol-placeholder');
+            const wheelContainer = document.getElementById('pistol-wheel-container');
+            const result = document.getElementById('pistol-result');
+            const wheel = document.getElementById('pistol-wheel');
+            const img = document.getElementById('pistol-image');
+            const name = document.getElementById('pistol-name');
+            const type = document.getElementById('pistol-type');
+
+            placeholder.classList.add('hidden');
+            result.classList.add('hidden');
+            wheelContainer.classList.remove('hidden');
+
+            // Build wheel if not built
+            if (!wheel.innerHTML) buildWheel();
+
+            // Random rotation (at least 5 full spins + random segment)
+            const count = pistols.length;
+            const anglePerSegment = 360 / count;
+            const randomSegment = Math.floor(Math.random() * count);
+            const targetRotation = wheelRotation + 1800 + (randomSegment * anglePerSegment) + (anglePerSegment / 2);
+
+            wheel.style.transform = `rotate(${targetRotation}deg)`;
+            wheelRotation = targetRotation;
+
+            // Play tick sounds during spin
+            let tickCount = 0;
+            const tickInterval = setInterval(() => {
+                playWheelTick();
+                tickCount++;
+                if (tickCount > 40) clearInterval(tickInterval);
+            }, 80);
+
+            // Show result after spin
+            setTimeout(() => {
+                clearInterval(tickInterval);
+                playWheelStop();
+                playWin();
+
+                const final = pistols[randomSegment];
+                img.src = final.img;
+                name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
+                type.textContent = currentLang === 'zh' ? final.typeZh : final.typeEn;
+
+                wheelContainer.classList.add('hidden');
+                result.classList.remove('hidden');
+                result.classList.add('result-pop');
+                createParticles('pistol-particles', '#22c55e');
+
+                isWheelSpinning = false;
+            }, 4000);
         }
     </script>
 </body>
