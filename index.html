@@ -336,12 +336,12 @@
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-green-500/30">
                 <div class="glow-bar" style="background: linear-gradient(90deg, #22c55e, #4ade80);"></div>
                 <div class="p-6">
-                    <h2 class="text-3xl font-bold text-center mb-6">🔫 手枪局</h2>
+                    <h2 class="text-3xl font-bold text-center mb-6" data-i18n="pistolTitle">🔫 手枪局</h2>
                     <div id="pistol-display" class="min-h-[360px] flex items-center justify-center bg-black/40 rounded-2xl relative">
                         <div id="pistol-particles" class="particles"></div>
                         <div id="pistol-placeholder" class="text-center">
                             <div class="text-7xl mb-4">🎲</div>
-                            <p class="text-gray-400 text-sm">手枪局选什么？</p>
+                            <p class="text-gray-400 text-sm" data-i18n="pistolReady">手枪局选什么？</p>
                         </div>
                         <div id="pistol-reel" class="hidden reel-container">
                             <div id="pistol-reel-strip" class="reel-strip"></div>
@@ -363,7 +363,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="randomPistol()" class="w-full mt-6 bg-green-600 hover:bg-green-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer">抽取手枪</button>
+                    <button onclick="randomPistol()" class="w-full mt-6 bg-green-600 hover:bg-green-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer" data-i18n="pickPistol">抽取手枪</button>
                 </div>
             </div>
         </div>
@@ -377,7 +377,7 @@
         </div>
 
         <div class="text-center mt-6 text-gray-500 text-sm">
-            <p data-i18n="footer">包含全部 29 位英雄 & 19 种武器</p>
+            <p data-i18n="footer">包含全部 29 位英雄 & 19 种武器+刀</p>
         </div>
     </div>
 
@@ -481,21 +481,27 @@
                 subtitle: "随机抽取器",
                 agentTitle: "🧍 随机英雄",
                 weaponTitle: "🔫 随机武器",
+                pistolTitle: "🔫 手枪局",
+                pistolReady: "手枪局选什么？",
                 ready: "准备好了吗？",
                 pickAgent: "抽取英雄",
                 pickWeapon: "抽取武器",
+                pickPistol: "抽取手枪",
                 pickBoth: "⚡ 同时抽取英雄&武器",
-                footer: "包含全部 29 位英雄 & 19 种武器"
+                footer: "包含全部 29 位英雄 & 19 种武器+刀"
             },
             en: {
                 subtitle: "Random Picker",
                 agentTitle: "🧍 Random Agent",
                 weaponTitle: "🔫 Random Weapon",
+                pistolTitle: "🔫 Pistol Round",
+                pistolReady: "What to pick for pistol round?",
                 ready: "Ready?",
                 pickAgent: "Pick Agent",
                 pickWeapon: "Pick Weapon",
+                pickPistol: "Pick Pistol",
                 pickBoth: "⚡ Pick Both",
-                footer: "29 Agents & 19 Weapons"
+                footer: "29 Agents & 19 Weapons + Melee"
             }
         };
 
@@ -529,7 +535,7 @@
                 const currentText = typeEl.textContent;
                 const pairs = {
                     "手枪": "Pistol", "冲锋枪": "SMG", "霰弹枪": "Shotgun",
-                    "步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun"
+                    "步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun", "刀": "Melee"
                 };
                 for (const [zh, en] of Object.entries(pairs)) {
                     if (currentText === zh || currentText === en) {
@@ -543,8 +549,12 @@
             if (pistolResult.style.opacity === '1') {
                 const typeEl = document.getElementById('pistol-type');
                 const currentText = typeEl.textContent;
-                if (currentText === "手枪" || currentText === "Pistol") {
-                    typeEl.textContent = lang === 'zh' ? "手枪" : "Pistol";
+                const pairs = {"手枪": "Pistol", "刀": "Melee"};
+                for (const [zh, en] of Object.entries(pairs)) {
+                    if (currentText === zh || currentText === en) {
+                        typeEl.textContent = lang === 'zh' ? zh : en;
+                        break;
+                    }
                 }
             }
         }
@@ -582,7 +592,7 @@
             { nameZh: "维托", nameEn: "Veto", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Veto.png" }
         ];
 
-        // ========== WEAPONS DATA ==========
+        // ========== WEAPONS DATA（新增刀） ==========
         const weapons = [
             { name: "Classic", nameZh: "标配", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
             { name: "Shorty", nameZh: "短炮", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
@@ -602,11 +612,12 @@
             { name: "Outlaw", nameZh: "莽侠", nameEn: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
             { name: "Operator", nameZh: "冥驹", nameEn: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
             { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
-            { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" }
+            { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" },
+            { name: "Melee", nameZh: "刀", nameEn: "Melee", typeZh: "刀", typeEn: "Melee", img: "weapons/Melee.png" }
         ];
 
-        // ========== PISTOL ONLY DATA ==========
-        const pistols = weapons.filter(w => w.typeZh === "手枪");
+        // ========== PISTOL ONLY DATA（过滤手枪+刀） ==========
+        const pistols = weapons.filter(w => w.typeZh === "手枪" || w.typeZh === "刀");
 
         // ========== PARTICLE SYSTEM ==========
         function createParticles(containerId, color) {
