@@ -9,21 +9,148 @@
     <style>
         body { background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%); }
         .glow-bar { height: 6px; }
-        .result-enter {
-            animation: slideUpFade 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        
+        /* ========== SLOT MACHINE REEL ========== */
+        .reel-container {
+            width: 260px;
+            height: 260px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            border: 2px solid #334155;
         }
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
+        .reel-container::before,
+        .reel-container::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            z-index: 10;
+            pointer-events: none;
         }
-        .spin-anim {
-            animation: spinBlur 0.15s ease-in-out;
+        .reel-container::before {
+            top: 0;
+            background: linear-gradient(180deg, rgba(15,23,42,0.9) 0%, transparent 100%);
         }
-        @keyframes spinBlur {
-            0% { filter: blur(0px); transform: scale(1); }
-            50% { filter: blur(2px); transform: scale(1.05); }
-            100% { filter: blur(0px); transform: scale(1); }
+        .reel-container::after {
+            bottom: 0;
+            background: linear-gradient(0deg, rgba(15,23,42,0.9) 0%, transparent 100%);
         }
+        .reel-strip {
+            position: absolute;
+            width: 100%;
+        }
+        .reel-item {
+            width: 260px;
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reel-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: brightness(0.5) blur(1px);
+        }
+        
+        /* ========== FLIP CARD ========== */
+        .flip-card {
+            perspective: 1000px;
+            width: 260px;
+            height: 260px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flip-card-front {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid #334155;
+        }
+        .flip-card-back {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid #ef4444;
+            transform: rotateY(180deg);
+            flex-direction: column;
+            padding: 10px;
+        }
+        .flip-card-back.weapon-back {
+            border-color: #f59e0b;
+        }
+        
+        /* ========== RESULT ANIMATIONS ========== */
+        .result-pop {
+            animation: resultPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes resultPop {
+            0% { opacity: 0; transform: scale(0.3) translateY(30px); }
+            50% { transform: scale(1.1) translateY(-5px); }
+            70% { transform: scale(0.95) translateY(2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .glow-pulse {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6), 0 0 60px rgba(239, 68, 68, 0.2); }
+        }
+        .glow-pulse-amber {
+            animation: glowPulseAmber 2s ease-in-out infinite;
+        }
+        @keyframes glowPulseAmber {
+            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(245, 158, 11, 0.2); }
+        }
+        
+        /* ========== PARTICLE EFFECT ========== */
+        .particles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        .particle.active {
+            animation: particleBurst 0.8s ease-out forwards;
+        }
+        @keyframes particleBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+        
+        /* ========== ROLE BADGES ========== */
         .role-badge {
             display: inline-block;
             padding: 4px 16px;
@@ -36,6 +163,8 @@
         .role-initiator { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
         .role-controller { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
         .role-sentinel { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+        
+        /* ========== LANG TOGGLE ========== */
         .lang-btn {
             transition: all 0.3s ease;
         }
@@ -51,6 +180,34 @@
         .lang-btn:not(.active):hover {
             color: white;
             border-color: #9ca3af;
+        }
+        
+        /* ========== SHINE EFFECT ========== */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 60%
+            );
+            transform: translateX(-100%);
+        }
+        .shine-effect.active::after {
+            animation: shine 0.8s ease-in-out;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
@@ -73,15 +230,37 @@
                 <div class="glow-bar" style="background: linear-gradient(90deg, #ef4444, #f59e0b);"></div>
                 <div class="p-8">
                     <h2 class="text-4xl font-bold text-center mb-8" data-i18n="agentTitle">🧍 随机英雄</h2>
-                    <div id="agent-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl">
+                    <div id="agent-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
+                        <!-- Particles -->
+                        <div id="agent-particles" class="particles"></div>
+                        
+                        <!-- Placeholder -->
                         <div id="agent-placeholder" class="text-center">
                             <div class="text-8xl mb-6">❓</div>
                             <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
                         </div>
-                        <div id="agent-result" class="hidden text-center result-enter">
-                            <img id="agent-image" class="mx-auto rounded-2xl mb-6" style="width:260px;height:260px;object-fit:contain" alt="">
-                            <h3 id="agent-name" class="text-5xl font-black"></h3>
-                            <div id="agent-role" class="role-badge"></div>
+                        
+                        <!-- Slot Machine Reel -->
+                        <div id="agent-reel" class="hidden reel-container">
+                            <div id="agent-reel-strip" class="reel-strip"></div>
+                        </div>
+                        
+                        <!-- Flip Card Result -->
+                        <div id="agent-result" class="hidden">
+                            <div class="flip-card" id="agent-flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <div class="text-6xl">❓</div>
+                                    </div>
+                                    <div class="flip-card-back glow-pulse shine-effect" id="agent-shine">
+                                        <img id="agent-image" class="w-[200px] h-[200px] object-contain mb-2" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="agent-text-result" class="text-center mt-4" style="opacity:0;">
+                                <h3 id="agent-name" class="text-5xl font-black"></h3>
+                                <div id="agent-role" class="role-badge"></div>
+                            </div>
                         </div>
                     </div>
                     <button onclick="randomAgent()" class="w-full mt-8 bg-red-600 hover:bg-red-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer" data-i18n="pickAgent">抽取英雄</button>
@@ -93,15 +272,37 @@
                 <div class="glow-bar" style="background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
                 <div class="p-8">
                     <h2 class="text-4xl font-bold text-center mb-8" data-i18n="weaponTitle">🔫 随机武器</h2>
-                    <div id="weapon-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl">
+                    <div id="weapon-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
+                        <!-- Particles -->
+                        <div id="weapon-particles" class="particles"></div>
+                        
+                        <!-- Placeholder -->
                         <div id="weapon-placeholder" class="text-center">
                             <div class="text-8xl mb-6">🎯</div>
                             <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
                         </div>
-                        <div id="weapon-result" class="hidden text-center result-enter">
-                            <img id="weapon-image" class="mx-auto rounded-2xl mb-6" style="width:260px;height:260px;object-fit:contain" alt="">
-                            <h3 id="weapon-name" class="text-5xl font-black"></h3>
-                            <p id="weapon-type" class="text-amber-400 text-2xl mt-2"></p>
+                        
+                        <!-- Slot Machine Reel -->
+                        <div id="weapon-reel" class="hidden reel-container">
+                            <div id="weapon-reel-strip" class="reel-strip"></div>
+                        </div>
+                        
+                        <!-- Flip Card Result -->
+                        <div id="weapon-result" class="hidden">
+                            <div class="flip-card" id="weapon-flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <div class="text-6xl">🎯</div>
+                                    </div>
+                                    <div class="flip-card-back weapon-back glow-pulse-amber shine-effect" id="weapon-shine">
+                                        <img id="weapon-image" class="w-[200px] h-[200px] object-contain mb-2" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="weapon-text-result" class="text-center mt-4" style="opacity:0;">
+                                <h3 id="weapon-name" class="text-5xl font-black"></h3>
+                                <p id="weapon-type" class="text-amber-400 text-2xl mt-2"></p>
+                            </div>
                         </div>
                     </div>
                     <button onclick="randomWeapon()" class="w-full mt-8 bg-amber-600 hover:bg-amber-700 transition-colors py-7 rounded-2xl text-xl font-bold cursor-pointer" data-i18n="pickWeapon">抽取武器</button>
@@ -151,43 +352,33 @@
 
         function setLang(lang) {
             currentLang = lang;
-            
-            // Update button states
             document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-            
-            // Update all text elements
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) {
-                    el.textContent = i18n[lang][key];
-                }
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
             });
             
-            // Update displayed role/type if result is visible
-            const agentResult = document.getElementById('agent-result');
-            if (!agentResult.classList.contains('hidden')) {
+            const agentResult = document.getElementById('agent-text-result');
+            if (agentResult.style.opacity === '1') {
                 const roleEl = document.getElementById('agent-role');
-                const currentRoleText = roleEl.textContent;
-                const rolePairs = {"决斗": "Duelist", "先锋": "Initiator", "控场": "Controller", "哨位": "Sentinel"};
-                for (const [zh, en] of Object.entries(rolePairs)) {
-                    if (currentRoleText === zh || currentRoleText === en) {
+                const currentText = roleEl.textContent;
+                const pairs = {"决斗": "Duelist", "先锋": "Initiator", "控场": "Controller", "哨位": "Sentinel"};
+                for (const [zh, en] of Object.entries(pairs)) {
+                    if (currentText === zh || currentText === en) {
                         roleEl.textContent = lang === 'zh' ? zh : en;
                         break;
                     }
                 }
             }
             
-            const weaponResult = document.getElementById('weapon-result');
-            if (!weaponResult.classList.contains('hidden')) {
+            const weaponResult = document.getElementById('weapon-text-result');
+            if (weaponResult.style.opacity === '1') {
                 const typeEl = document.getElementById('weapon-type');
-                const currentTypeText = typeEl.textContent;
-                const typePairs = {
-                    "步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun",
-                    "霰弹枪": "Shotgun", "冲锋枪": "SMG", "手枪": "Pistol"
-                };
-                for (const [zh, en] of Object.entries(typePairs)) {
-                    if (currentTypeText === zh || currentTypeText === en) {
+                const currentText = typeEl.textContent;
+                const pairs = {"步枪": "Rifle", "狙击枪": "Sniper", "机枪": "Machine Gun", "霰弹枪": "Shotgun", "冲锋枪": "SMG", "手枪": "Pistol"};
+                for (const [zh, en] of Object.entries(pairs)) {
+                    if (currentText === zh || currentText === en) {
                         typeEl.textContent = lang === 'zh' ? zh : en;
                         break;
                     }
@@ -195,129 +386,189 @@
             }
         }
 
-        // ========== AGENTS & WEAPONS DATA ==========
+        // ========== DATA ==========
         const agents = [
-            // Duelist - 8
-            { name: "Jett", nameZh: "捷风", nameEn: "Jett", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Jett.png" },
-            { name: "Phoenix", nameZh: "不死鸟", nameEn: "Phoenix", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Phoenix.png" },
-            { name: "Reyna", nameZh: "芮娜", nameEn: "Reyna", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Reyna.png" },
-            { name: "Raze", nameZh: "雷兹", nameEn: "Raze", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Raze.png" },
-            { name: "Yoru", nameZh: "夜露", nameEn: "Yoru", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Yoru.png" },
-            { name: "Neon", nameZh: "霓虹", nameEn: "Neon", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Neon.png" },
-            { name: "Iso", nameZh: "壹决", nameEn: "Iso", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Iso.png" },
-            { name: "Waylay", nameZh: "维赖", nameEn: "Waylay", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Waylay.png" },
-            
-            // Initiator - 7
-            { name: "Sova", nameZh: "猎枭", nameEn: "Sova", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Sova.png" },
-            { name: "Breach", nameZh: "铁臂", nameEn: "Breach", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Breach.png" },
-            { name: "Skye", nameZh: "斯凯", nameEn: "Skye", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Skye.png" },
-            { name: "KAY/O", nameZh: "KAY/O", nameEn: "KAY/O", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/KAYO.png" },
-            { name: "Fade", nameZh: "黑梦", nameEn: "Fade", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Fade.png" },
-            { name: "Gekko", nameZh: "盖可", nameEn: "Gekko", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Gekko.png" },
-            { name: "Tejo", nameZh: "钛狐", nameEn: "Tejo", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Tejo.png" },
-            
-            // Controller - 7
-            { name: "Brimstone", nameZh: "炼狱", nameEn: "Brimstone", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Brimstone.png" },
-            { name: "Viper", nameZh: "蝰蛇", nameEn: "Viper", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Viper.png" },
-            { name: "Omen", nameZh: "幽影", nameEn: "Omen", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Omen.png" },
-            { name: "Astra", nameZh: "星礈", nameEn: "Astra", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Astra.png" },
-            { name: "Harbor", nameZh: "海神", nameEn: "Harbor", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Harbor.png" },
-            { name: "Clove", nameZh: "暮蝶", nameEn: "Clove", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Clove.png" },
-            { name: "Miks", nameZh: "米克丝", nameEn: "Miks", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Miks.png" },
-            
-            // Sentinel - 7
-            { name: "Sage", nameZh: "贤者", nameEn: "Sage", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Sage.png" },
-            { name: "Killjoy", nameZh: "奇乐", nameEn: "Killjoy", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Killjoy.png" },
-            { name: "Cypher", nameZh: "零", nameEn: "Cypher", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Cypher.png" },
-            { name: "Chamber", nameZh: "尚勃勒", nameEn: "Chamber", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Chamber.png" },
-            { name: "Deadlock", nameZh: "钢锁", nameEn: "Deadlock", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Deadlock.png" },
-            { name: "Vyse", nameZh: "维斯", nameEn: "Vyse", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Vyse.png" },
-            { name: "Veto", nameZh: "维托", nameEn: "Veto", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Veto.png" }
+            { nameZh: "捷风", nameEn: "Jett", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Jett.png" },
+            { nameZh: "不死鸟", nameEn: "Phoenix", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Phoenix.png" },
+            { nameZh: "芮娜", nameEn: "Reyna", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Reyna.png" },
+            { nameZh: "雷兹", nameEn: "Raze", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Raze.png" },
+            { nameZh: "夜露", nameEn: "Yoru", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Yoru.png" },
+            { nameZh: "霓虹", nameEn: "Neon", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Neon.png" },
+            { nameZh: "壹决", nameEn: "Iso", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Iso.png" },
+            { nameZh: "维赖", nameEn: "Waylay", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Waylay.png" },
+            { nameZh: "猎枭", nameEn: "Sova", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Sova.png" },
+            { nameZh: "铁臂", nameEn: "Breach", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Breach.png" },
+            { nameZh: "斯凯", nameEn: "Skye", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Skye.png" },
+            { nameZh: "KAY/O", nameEn: "KAY/O", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/KAYO.png" },
+            { nameZh: "黑梦", nameEn: "Fade", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Fade.png" },
+            { nameZh: "盖可", nameEn: "Gekko", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Gekko.png" },
+            { nameZh: "钛狐", nameEn: "Tejo", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Tejo.png" },
+            { nameZh: "炼狱", nameEn: "Brimstone", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Brimstone.png" },
+            { nameZh: "蝰蛇", nameEn: "Viper", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Viper.png" },
+            { nameZh: "幽影", nameEn: "Omen", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Omen.png" },
+            { nameZh: "星礈", nameEn: "Astra", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Astra.png" },
+            { nameZh: "海神", nameEn: "Harbor", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Harbor.png" },
+            { nameZh: "暮蝶", nameEn: "Clove", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Clove.png" },
+            { nameZh: "米克丝", nameEn: "Miks", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Miks.png" },
+            { nameZh: "贤者", nameEn: "Sage", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Sage.png" },
+            { nameZh: "奇乐", nameEn: "Killjoy", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Killjoy.png" },
+            { nameZh: "零", nameEn: "Cypher", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Cypher.png" },
+            { nameZh: "尚勃勒", nameEn: "Chamber", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Chamber.png" },
+            { nameZh: "钢锁", nameEn: "Deadlock", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Deadlock.png" },
+            { nameZh: "维斯", nameEn: "Vyse", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Vyse.png" },
+            { nameZh: "维托", nameEn: "Veto", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Veto.png" }
         ];
 
         const weapons = [
-            // Rifles
-            { name: "Vandal", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Vandal.png" },
-            { name: "Phantom", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Phantom.png" },
-            { name: "Bulldog", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Bulldog.png" },
-            { name: "Guardian", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Guardian.png" },
-            
-            // Snipers
-            { name: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
-            { name: "Marshal", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Marshal.png" },
-            { name: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
-            
-            // Machine Guns
-            { name: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" },
-            { name: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
-            
-            // Shotguns
-            { name: "Judge", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Judge.png" },
-            { name: "Bucky", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Bucky.png" },
-            
-            // SMGs
-            { name: "Spectre", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Spectre.png" },
-            { name: "Stinger", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Stinger.png" },
-            
-            // Pistols
-            { name: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
-            { name: "Ghost", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Ghost.png" },
-            { name: "Sheriff", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Sheriff.png" },
-            { name: "Frenzy", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Frenzy.png" },
-            { name: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
-            { name: "Bandit", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Bandit.png" }
+            { name: "Vandal", nameZh: "狂徒", nameEn: "Vandal", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Vandal.png" },
+            { name: "Phantom", nameZh: "幻影", nameEn: "Phantom", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Phantom.png" },
+            { name: "Bulldog", nameZh: "斗牛犬", nameEn: "Bulldog", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Bulldog.png" },
+            { name: "Guardian", nameZh: "捍卫者", nameEn: "Guardian", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Guardian.png" },
+            { name: "Operator", nameZh: "间谍", nameEn: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
+            { name: "Marshal", nameZh: "警长", nameEn: "Marshal", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Marshal.png" },
+            { name: "Outlaw", nameZh: "亡命之徒", nameEn: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
+            { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" },
+            { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
+            { name: "Judge", nameZh: "判官", nameEn: "Judge", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Judge.png" },
+            { name: "Bucky", nameZh: "雄鹿", nameEn: "Bucky", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Bucky.png" },
+            { name: "Spectre", nameZh: "幽灵", nameEn: "Spectre", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Spectre.png" },
+            { name: "Stinger", nameZh: "刺痛", nameEn: "Stinger", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Stinger.png" },
+            { name: "Classic", nameZh: "经典", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
+            { name: "Ghost", nameZh: "鬼魅", nameEn: "Ghost", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Ghost.png" },
+            { name: "Sheriff", nameZh: "神射", nameEn: "Sheriff", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Sheriff.png" },
+            { name: "Frenzy", nameZh: "狂怒", nameEn: "Frenzy", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Frenzy.png" },
+            { name: "Shorty", nameZh: "短管", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
+            { name: "Bandit", nameZh: "匪徒", nameEn: "Bandit", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Bandit.png" }
         ];
 
-        function spin(displayId, resultId, imgId, nameId, typeId, list, isAgent) {
-            const display = document.getElementById(displayId);
-            const placeholder = display.querySelector('[id*="placeholder"]');
+        // ========== PARTICLE SYSTEM ==========
+        function createParticles(containerId, color) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.background = color;
+                const angle = (Math.PI * 2 * i) / 20;
+                const dist = 80 + Math.random() * 60;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.animationDelay = (Math.random() * 0.3) + 's';
+                container.appendChild(p);
+            }
+            setTimeout(() => {
+                container.querySelectorAll('.particle').forEach(p => p.classList.add('active'));
+            }, 50);
+        }
+
+        // ========== SLOT MACHINE + FLIP ANIMATION ==========
+        function spin(displayId, placeholderId, reelId, reelStripId, resultId, flipCardId, textResultId, shineId, imgId, nameId, typeId, list, isAgent, particleId, particleColor) {
+            const placeholder = document.getElementById(placeholderId);
+            const reel = document.getElementById(reelId);
+            const reelStrip = document.getElementById(reelStripId);
             const result = document.getElementById(resultId);
+            const flipCard = document.getElementById(flipCardId);
+            const textResult = document.getElementById(textResultId);
+            const shine = document.getElementById(shineId);
             const img = document.getElementById(imgId);
             const name = document.getElementById(nameId);
             const type = document.getElementById(typeId);
             
+            // Reset states
             placeholder.classList.add('hidden');
             result.classList.add('hidden');
-            result.classList.remove('result-enter');
-
-            let i = 0;
-            const interval = setInterval(() => {
+            flipCard.classList.remove('flipped');
+            textResult.style.opacity = '0';
+            textResult.classList.remove('result-pop');
+            shine.classList.remove('active');
+            
+            // Show reel
+            reel.classList.remove('hidden');
+            
+            // Build reel strip with random items
+            let stripHTML = '';
+            for (let i = 0; i < 20; i++) {
                 const item = list[Math.floor(Math.random() * list.length)];
-                img.src = item.img;
-                img.classList.add('spin-anim');
-                setTimeout(() => img.classList.remove('spin-anim'), 150);
-                i++;
-                if (i > 12) {
-                    clearInterval(interval);
+                stripHTML += `<div class="reel-item"><img src="${item.img}" alt=""></div>`;
+            }
+            reelStrip.innerHTML = stripHTML;
+            reelStrip.style.transform = 'translateY(0)';
+            
+            // Animate reel
+            const speed = 30;
+            const totalScroll = 260 * 15;
+            let currentScroll = 0;
+            
+            const animateReel = () => {
+                currentScroll += speed;
+                reelStrip.style.transform = `translateY(-${currentScroll % (260 * 20)}px)`;
+                
+                if (currentScroll < totalScroll) {
+                    requestAnimationFrame(animateReel);
+                } else {
+                    // Stop reel, show result
+                    reel.classList.add('hidden');
+                    result.classList.remove('hidden');
+                    
                     const final = list[Math.floor(Math.random() * list.length)];
                     img.src = final.img;
-                    name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
-                    if (isAgent) {
-                        type.textContent = currentLang === 'zh' ? final.roleZh : final.roleEn;
-                        type.className = 'role-badge ' + final.roleClass;
-                    } else {
-                        type.textContent = currentLang === 'zh' ? final.typeZh : final.typeEn;
-                    }
-                    result.classList.remove('hidden');
-                    void result.offsetWidth;
-                    result.classList.add('result-enter');
+                    
+                    // Trigger flip
+                    setTimeout(() => {
+                        flipCard.classList.add('flipped');
+                        shine.classList.add('active');
+                        
+                        // Particles
+                        createParticles(particleId, particleColor);
+                        
+                        // Show text after flip
+                        setTimeout(() => {
+                            if (isAgent) {
+                                name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
+                                type.textContent = currentLang === 'zh' ? final.roleZh : final.roleEn;
+                                type.className = 'role-badge ' + final.roleClass;
+                            } else {
+                                // Weapon: show name + type
+                                const weaponName = currentLang === 'zh' ? final.nameZh : final.nameEn;
+                                const weaponType = currentLang === 'zh' ? final.typeZh : final.typeEn;
+                                name.textContent = weaponName;
+                                type.textContent = weaponType;
+                            }
+                            textResult.style.opacity = '1';
+                            textResult.classList.add('result-pop');
+                        }, 400);
+                    }, 100);
                 }
-            }, 100);
+            };
+            
+            requestAnimationFrame(animateReel);
         }
 
         function randomAgent() {
-            spin('agent-display', 'agent-result', 'agent-image', 'agent-name', 'agent-role', agents, true);
+            spin(
+                'agent-display', 'agent-placeholder', 'agent-reel', 'agent-reel-strip',
+                'agent-result', 'agent-flip-card', 'agent-text-result', 'agent-shine',
+                'agent-image', 'agent-name', 'agent-role',
+                agents, true, 'agent-particles', '#ef4444'
+            );
         }
 
         function randomWeapon() {
-            spin('weapon-display', 'weapon-result', 'weapon-image', 'weapon-name', 'weapon-type', weapons, false);
+            spin(
+                'weapon-display', 'weapon-placeholder', 'weapon-reel', 'weapon-reel-strip',
+                'weapon-result', 'weapon-flip-card', 'weapon-text-result', 'weapon-shine',
+                'weapon-image', 'weapon-name', 'weapon-type',
+                weapons, false, 'weapon-particles', '#f59e0b'
+            );
         }
 
         function randomBoth() {
             randomAgent();
             setTimeout(() => {
                 randomWeapon();
-            }, 700);
+            }, 800);
         }
     </script>
 </body>
