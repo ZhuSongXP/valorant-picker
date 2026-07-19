@@ -9,7 +9,7 @@
     <style>
         body { background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%); }
         .glow-bar { height: 6px; }
-        
+
         /* ========== SLOT MACHINE REEL ========== */
         .reel-container {
             width: 260px;
@@ -56,7 +56,7 @@
             object-fit: contain;
             filter: brightness(0.5) blur(1px);
         }
-        
+
         /* ========== FLIP CARD ========== */
         .flip-card {
             perspective: 1000px;
@@ -97,7 +97,7 @@
         .flip-card-back.weapon-back {
             border-color: #f59e0b;
         }
-        
+
         /* ========== RESULT ANIMATIONS ========== */
         .result-pop {
             animation: resultPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -108,7 +108,7 @@
             70% { transform: scale(0.95) translateY(2px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-        
+
         .glow-pulse {
             animation: glowPulse 2s ease-in-out infinite;
         }
@@ -123,7 +123,7 @@
             0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
             50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(245, 158, 11, 0.2); }
         }
-        
+
         /* ========== PARTICLE EFFECT ========== */
         .particles {
             position: absolute;
@@ -149,7 +149,7 @@
             0% { opacity: 1; transform: translate(0, 0) scale(1); }
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
-        
+
         /* ========== ROLE BADGES ========== */
         .role-badge {
             display: inline-block;
@@ -163,7 +163,7 @@
         .role-initiator { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
         .role-controller { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
         .role-sentinel { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
-        
+
         /* ========== LANG TOGGLE ========== */
         .lang-btn {
             transition: all 0.3s ease;
@@ -181,7 +181,7 @@
             color: white;
             border-color: #9ca3af;
         }
-        
+
         /* ========== SHINE EFFECT ========== */
         .shine-effect {
             position: relative;
@@ -209,6 +209,33 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
+
+        /* ========== SOUND TOGGLE ========== */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid #475569;
+            color: #94a3b8;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .sound-toggle:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .sound-toggle.muted {
+            color: #475569;
+        }
     </style>
 </head>
 <body class="min-h-screen text-white py-8">
@@ -231,21 +258,14 @@
                 <div class="p-8">
                     <h2 class="text-4xl font-bold text-center mb-8" data-i18n="agentTitle">🧍 随机英雄</h2>
                     <div id="agent-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
-                        <!-- Particles -->
                         <div id="agent-particles" class="particles"></div>
-                        
-                        <!-- Placeholder -->
                         <div id="agent-placeholder" class="text-center">
                             <div class="text-8xl mb-6">❓</div>
                             <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
                         </div>
-                        
-                        <!-- Slot Machine Reel -->
                         <div id="agent-reel" class="hidden reel-container">
                             <div id="agent-reel-strip" class="reel-strip"></div>
                         </div>
-                        
-                        <!-- Flip Card Result -->
                         <div id="agent-result" class="hidden">
                             <div class="flip-card" id="agent-flip-card">
                                 <div class="flip-card-inner">
@@ -273,21 +293,14 @@
                 <div class="p-8">
                     <h2 class="text-4xl font-bold text-center mb-8" data-i18n="weaponTitle">🔫 随机武器</h2>
                     <div id="weapon-display" class="min-h-[420px] flex items-center justify-center bg-black/40 rounded-2xl relative">
-                        <!-- Particles -->
                         <div id="weapon-particles" class="particles"></div>
-                        
-                        <!-- Placeholder -->
                         <div id="weapon-placeholder" class="text-center">
                             <div class="text-8xl mb-6">🎯</div>
                             <p class="text-gray-400" data-i18n="ready">准备好了吗？</p>
                         </div>
-                        
-                        <!-- Slot Machine Reel -->
                         <div id="weapon-reel" class="hidden reel-container">
                             <div id="weapon-reel-strip" class="reel-strip"></div>
                         </div>
-                        
-                        <!-- Flip Card Result -->
                         <div id="weapon-result" class="hidden">
                             <div class="flip-card" id="weapon-flip-card">
                                 <div class="flip-card-inner">
@@ -317,13 +330,111 @@
                 ⚡ 同时抽取
             </button>
         </div>
-        
+
         <div class="text-center mt-8 text-gray-500 text-sm">
             <p data-i18n="footer">包含全部 29 位英雄 & 19 种武器</p>
         </div>
     </div>
 
+    <!-- Sound Toggle Button -->
+    <button onclick="toggleSound()" id="sound-btn" class="sound-toggle" title="开关音效">
+        <i class="fas fa-volume-up" id="sound-icon"></i>
+    </button>
+
     <script>
+        // ========== AUDIO ENGINE ==========
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                btn.classList.remove('muted');
+                icon.className = 'fas fa-volume-up';
+            } else {
+                btn.classList.add('muted');
+                icon.className = 'fas fa-volume-mute';
+            }
+        }
+
+        // Play a tick sound (for slot machine spinning)
+        function playTick() {
+            if (!soundEnabled || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // Play a flip sound
+        function playFlip() {
+            if (!soundEnabled || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // Play a win/reveal sound
+        function playWin() {
+            if (!soundEnabled || !audioCtx) return;
+            // Chord: C-E-G
+            const freqs = [523.25, 659.25, 783.99];
+            freqs.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.05);
+                gain.gain.setValueAtTime(0, audioCtx.currentTime + i * 0.05);
+                gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + i * 0.05 + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.05 + 0.5);
+                osc.start(audioCtx.currentTime + i * 0.05);
+                osc.stop(audioCtx.currentTime + i * 0.05 + 0.5);
+            });
+        }
+
+        // Play a click sound
+        function playClick() {
+            if (!soundEnabled || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
         // ========== BILINGUAL DATA ==========
         const i18n = {
             zh: {
@@ -358,7 +469,7 @@
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) el.textContent = i18n[lang][key];
             });
-            
+
             const agentResult = document.getElementById('agent-text-result');
             if (agentResult.style.opacity === '1') {
                 const roleEl = document.getElementById('agent-role');
@@ -371,7 +482,7 @@
                     }
                 }
             }
-            
+
             const weaponResult = document.getElementById('weapon-text-result');
             if (weaponResult.style.opacity === '1') {
                 const typeEl = document.getElementById('weapon-type');
@@ -391,7 +502,6 @@
 
         // ========== AGENTS DATA ==========
         const agents = [
-            // Duelist - 8
             { nameZh: "捷风", nameEn: "Jett", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Jett.png" },
             { nameZh: "不死鸟", nameEn: "Phoenix", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Phoenix.png" },
             { nameZh: "芮娜", nameEn: "Reyna", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Reyna.png" },
@@ -400,7 +510,6 @@
             { nameZh: "霓虹", nameEn: "Neon", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Neon.png" },
             { nameZh: "壹决", nameEn: "Iso", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Iso.png" },
             { nameZh: "维赖", nameEn: "Waylay", roleZh: "决斗", roleEn: "Duelist", roleClass: "role-duelist", img: "agents/Waylay.png" },
-            // Initiator - 7
             { nameZh: "猎枭", nameEn: "Sova", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Sova.png" },
             { nameZh: "铁臂", nameEn: "Breach", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Breach.png" },
             { nameZh: "斯凯", nameEn: "Skye", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Skye.png" },
@@ -408,7 +517,6 @@
             { nameZh: "黑梦", nameEn: "Fade", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Fade.png" },
             { nameZh: "盖可", nameEn: "Gekko", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Gekko.png" },
             { nameZh: "钛狐", nameEn: "Tejo", roleZh: "先锋", roleEn: "Initiator", roleClass: "role-initiator", img: "agents/Tejo.png" },
-            // Controller - 7
             { nameZh: "炼狱", nameEn: "Brimstone", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Brimstone.png" },
             { nameZh: "蝰蛇", nameEn: "Viper", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Viper.png" },
             { nameZh: "幽影", nameEn: "Omen", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Omen.png" },
@@ -416,7 +524,6 @@
             { nameZh: "海神", nameEn: "Harbor", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Harbor.png" },
             { nameZh: "暮蝶", nameEn: "Clove", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Clove.png" },
             { nameZh: "米克丝", nameEn: "Miks", roleZh: "控场", roleEn: "Controller", roleClass: "role-controller", img: "agents/Miks.png" },
-            // Sentinel - 7
             { nameZh: "贤者", nameEn: "Sage", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Sage.png" },
             { nameZh: "奇乐", nameEn: "Killjoy", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Killjoy.png" },
             { nameZh: "零", nameEn: "Cypher", roleZh: "哨位", roleEn: "Sentinel", roleClass: "role-sentinel", img: "agents/Cypher.png" },
@@ -427,31 +534,24 @@
         ];
 
         // ========== WEAPONS DATA - CN OFFICIAL NAMES ==========
-        // Categories kept as: 手枪, 冲锋枪, 霰弹枪, 步枪, 狙击枪, 机枪
         const weapons = [
-            // 手枪 / Pistol
             { name: "Classic", nameZh: "标配", nameEn: "Classic", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Classic.png" },
             { name: "Shorty", nameZh: "短炮", nameEn: "Shorty", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Shorty.png" },
             { name: "Frenzy", nameZh: "狂怒", nameEn: "Frenzy", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Frenzy.png" },
             { name: "Ghost", nameZh: "鬼魅", nameEn: "Ghost", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Ghost.png" },
             { name: "Sheriff", nameZh: "正义", nameEn: "Sheriff", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Sheriff.png" },
             { name: "Bandit", nameZh: "追猎", nameEn: "Bandit", typeZh: "手枪", typeEn: "Pistol", img: "weapons/Bandit.png" },
-            // 冲锋枪 / SMG
             { name: "Stinger", nameZh: "蜂刺", nameEn: "Stinger", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Stinger.png" },
             { name: "Spectre", nameZh: "骇灵", nameEn: "Spectre", typeZh: "冲锋枪", typeEn: "SMG", img: "weapons/Spectre.png" },
-            // 霰弹枪 / Shotgun
             { name: "Bucky", nameZh: "雄鹿", nameEn: "Bucky", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Bucky.png" },
             { name: "Judge", nameZh: "判官", nameEn: "Judge", typeZh: "霰弹枪", typeEn: "Shotgun", img: "weapons/Judge.png" },
-            // 步枪 / Rifle
             { name: "Bulldog", nameZh: "獠犬", nameEn: "Bulldog", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Bulldog.png" },
             { name: "Guardian", nameZh: "戍卫", nameEn: "Guardian", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Guardian.png" },
             { name: "Phantom", nameZh: "幻影", nameEn: "Phantom", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Phantom.png" },
             { name: "Vandal", nameZh: "狂徒", nameEn: "Vandal", typeZh: "步枪", typeEn: "Rifle", img: "weapons/Vandal.png" },
-            // 狙击枪 / Sniper
             { name: "Marshal", nameZh: "飞将", nameEn: "Marshal", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Marshal.png" },
             { name: "Outlaw", nameZh: "莽侠", nameEn: "Outlaw", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Outlaw.png" },
             { name: "Operator", nameZh: "冥驹", nameEn: "Operator", typeZh: "狙击枪", typeEn: "Sniper", img: "weapons/Operator.png" },
-            // 机枪 / Machine Gun
             { name: "Ares", nameZh: "战神", nameEn: "Ares", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Ares.png" },
             { name: "Odin", nameZh: "奥丁", nameEn: "Odin", typeZh: "机枪", typeEn: "Machine Gun", img: "weapons/Odin.png" }
         ];
@@ -480,6 +580,9 @@
 
         // ========== SLOT MACHINE + FLIP ANIMATION ==========
         function spin(displayId, placeholderId, reelId, reelStripId, resultId, flipCardId, textResultId, shineId, imgId, nameId, typeId, list, isAgent, particleId, particleColor) {
+            initAudio();
+            playClick();
+
             const placeholder = document.getElementById(placeholderId);
             const reel = document.getElementById(reelId);
             const reelStrip = document.getElementById(reelStripId);
@@ -490,16 +593,16 @@
             const img = document.getElementById(imgId);
             const name = document.getElementById(nameId);
             const type = document.getElementById(typeId);
-            
+
             placeholder.classList.add('hidden');
             result.classList.add('hidden');
             flipCard.classList.remove('flipped');
             textResult.style.opacity = '0';
             textResult.classList.remove('result-pop');
             shine.classList.remove('active');
-            
+
             reel.classList.remove('hidden');
-            
+
             let stripHTML = '';
             for (let i = 0; i < 20; i++) {
                 const item = list[Math.floor(Math.random() * list.length)];
@@ -507,30 +610,39 @@
             }
             reelStrip.innerHTML = stripHTML;
             reelStrip.style.transform = 'translateY(0)';
-            
+
             const speed = 30;
             const totalScroll = 260 * 15;
             let currentScroll = 0;
-            
+            let tickCounter = 0;
+
             const animateReel = () => {
                 currentScroll += speed;
                 reelStrip.style.transform = `translateY(-${currentScroll % (260 * 20)}px)`;
-                
+
+                // Play tick sound every few frames
+                tickCounter++;
+                if (tickCounter % 3 === 0) {
+                    playTick();
+                }
+
                 if (currentScroll < totalScroll) {
                     requestAnimationFrame(animateReel);
                 } else {
                     reel.classList.add('hidden');
                     result.classList.remove('hidden');
-                    
+
                     const final = list[Math.floor(Math.random() * list.length)];
                     img.src = final.img;
-                    
+
                     setTimeout(() => {
+                        playFlip();
                         flipCard.classList.add('flipped');
                         shine.classList.add('active');
                         createParticles(particleId, particleColor);
-                        
+
                         setTimeout(() => {
+                            playWin();
                             if (isAgent) {
                                 name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
                                 type.textContent = currentLang === 'zh' ? final.roleZh : final.roleEn;
@@ -547,7 +659,7 @@
                     }, 100);
                 }
             };
-            
+
             requestAnimationFrame(animateReel);
         }
 
