@@ -101,87 +101,6 @@
             border-color: #22c55e;
         }
 
-        /* ========== WHEEL SPINNER ========== */
-        .wheel-container {
-            position: relative;
-            width: 280px;
-            height: 280px;
-        }
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: relative;
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            border: 4px solid #22c55e;
-            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
-        }
-        .wheel-segment {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: 100% 100%;
-            left: 0;
-            top: 0;
-            overflow: hidden;
-            border-radius: 0 0 100% 0;
-        }
-        .wheel-segment-inner {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            left: 0;
-            top: 0;
-            transform-origin: 50% 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .wheel-segment img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            transform: rotate(-90deg);
-        }
-        .wheel-segment-text {
-            position: absolute;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            transform-origin: center;
-        }
-        .wheel-pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid #22c55e;
-            z-index: 20;
-            filter: drop-shadow(0 0 10px rgba(34,197,94,0.8));
-        }
-        .wheel-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 3px solid #22c55e;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 15;
-            font-size: 1.5rem;
-            box-shadow: 0 0 20px rgba(34,197,94,0.4);
-        }
-
         /* ========== RESULT ANIMATIONS ========== */
         .result-pop {
             animation: resultPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -413,37 +332,38 @@
                 </div>
             </div>
 
-            <!-- 手枪局转盘 -->
+            <!-- 手枪局 -->
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-green-500/30">
                 <div class="glow-bar" style="background: linear-gradient(90deg, #22c55e, #4ade80);"></div>
                 <div class="p-6">
-                    <h2 class="text-3xl font-bold text-center mb-6">🔫 手枪局转盘</h2>
-                    <div id="pistol-display" class="min-h-[360px] flex flex-col items-center justify-center bg-black/40 rounded-2xl relative">
+                    <h2 class="text-3xl font-bold text-center mb-6">🔫 手枪局</h2>
+                    <div id="pistol-display" class="min-h-[360px] flex items-center justify-center bg-black/40 rounded-2xl relative">
                         <div id="pistol-particles" class="particles"></div>
-
-                        <!-- Placeholder -->
                         <div id="pistol-placeholder" class="text-center">
                             <div class="text-7xl mb-4">🎲</div>
                             <p class="text-gray-400 text-sm">手枪局选什么？</p>
                         </div>
-
-                        <!-- Wheel -->
-                        <div id="pistol-wheel-container" class="wheel-container hidden">
-                            <div class="wheel-pointer"></div>
-                            <div id="pistol-wheel" class="wheel"></div>
-                            <div class="wheel-center">🔫</div>
+                        <div id="pistol-reel" class="hidden reel-container">
+                            <div id="pistol-reel-strip" class="reel-strip"></div>
                         </div>
-
-                        <!-- Result -->
-                        <div id="pistol-result" class="hidden text-center mt-4">
-                            <div class="glow-pulse-green rounded-2xl p-4 bg-black/60">
-                                <img id="pistol-image" class="w-[120px] h-[120px] object-contain mx-auto mb-2" alt="">
+                        <div id="pistol-result" class="hidden">
+                            <div class="flip-card" id="pistol-flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <div class="text-5xl">🎲</div>
+                                    </div>
+                                    <div class="flip-card-back pistol-back glow-pulse-green shine-effect" id="pistol-shine">
+                                        <img id="pistol-image" class="w-[160px] h-[160px] object-contain mb-2" alt="">
+                                    </div>
+                                </div>
                             </div>
-                            <h3 id="pistol-name" class="text-4xl font-black mt-3"></h3>
-                            <p id="pistol-type" class="text-green-400 text-xl mt-1"></p>
+                            <div id="pistol-text-result" class="text-center mt-3" style="opacity:0;">
+                                <h3 id="pistol-name" class="text-4xl font-black"></h3>
+                                <p id="pistol-type" class="text-green-400 text-xl mt-1"></p>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="spinPistolWheel()" class="w-full mt-6 bg-green-600 hover:bg-green-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer">转动手枪局转盘</button>
+                    <button onclick="randomPistol()" class="w-full mt-6 bg-green-600 hover:bg-green-700 transition-colors py-5 rounded-2xl text-lg font-bold cursor-pointer">抽取手枪</button>
                 </div>
             </div>
         </div>
@@ -555,35 +475,6 @@
             osc.stop(audioCtx.currentTime + 0.08);
         }
 
-        function playWheelTick() {
-            if (!soundEnabled || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600 + Math.random() * 400, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
-            osc.start(audioCtx.currentTime);
-            osc.stop(audioCtx.currentTime + 0.04);
-        }
-
-        function playWheelStop() {
-            if (!soundEnabled || !audioCtx) return;
-            // Ding sound
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-            osc.start(audioCtx.currentTime);
-            osc.stop(audioCtx.currentTime + 0.3);
-        }
-
         // ========== BILINGUAL DATA ==========
         const i18n = {
             zh: {
@@ -645,6 +536,15 @@
                         typeEl.textContent = lang === 'zh' ? zh : en;
                         break;
                     }
+                }
+            }
+
+            const pistolResult = document.getElementById('pistol-text-result');
+            if (pistolResult.style.opacity === '1') {
+                const typeEl = document.getElementById('pistol-type');
+                const currentText = typeEl.textContent;
+                if (currentText === "手枪" || currentText === "Pistol") {
+                    typeEl.textContent = lang === 'zh' ? "手枪" : "Pistol";
                 }
             }
         }
@@ -832,94 +732,20 @@
             );
         }
 
+        function randomPistol() {
+            spin(
+                'pistol-display', 'pistol-placeholder', 'pistol-reel', 'pistol-reel-strip',
+                'pistol-result', 'pistol-flip-card', 'pistol-text-result', 'pistol-shine',
+                'pistol-image', 'pistol-name', 'pistol-type',
+                pistols, false, 'pistol-particles', '#22c55e'
+            );
+        }
+
         function randomBoth() {
             randomAgent();
             setTimeout(() => {
                 randomWeapon();
             }, 800);
-        }
-
-        // ========== PISTOL WHEEL ==========
-        let wheelRotation = 0;
-        let isWheelSpinning = false;
-
-        function buildWheel() {
-            const wheel = document.getElementById('pistol-wheel');
-            const count = pistols.length;
-            const anglePerSegment = 360 / count;
-            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7'];
-
-            let html = '';
-            pistols.forEach((pistol, i) => {
-                const rotation = i * anglePerSegment;
-                const color = colors[i % colors.length];
-                html += `
-                    <div class="wheel-segment" style="transform: rotate(${rotation}deg);">
-                        <div class="wheel-segment-inner" style="background: ${color}20; border-right: 2px solid ${color}40;">
-                            <img src="${pistol.img}" style="transform: rotate(${-rotation - anglePerSegment/2}deg) translateX(30px);" alt="">
-                        </div>
-                    </div>
-                `;
-            });
-            wheel.innerHTML = html;
-        }
-
-        function spinPistolWheel() {
-            if (isWheelSpinning) return;
-            isWheelSpinning = true;
-            initAudio();
-            playClick();
-
-            const placeholder = document.getElementById('pistol-placeholder');
-            const wheelContainer = document.getElementById('pistol-wheel-container');
-            const result = document.getElementById('pistol-result');
-            const wheel = document.getElementById('pistol-wheel');
-            const img = document.getElementById('pistol-image');
-            const name = document.getElementById('pistol-name');
-            const type = document.getElementById('pistol-type');
-
-            placeholder.classList.add('hidden');
-            result.classList.add('hidden');
-            wheelContainer.classList.remove('hidden');
-
-            // Build wheel if not built
-            if (!wheel.innerHTML) buildWheel();
-
-            // Random rotation (at least 5 full spins + random segment)
-            const count = pistols.length;
-            const anglePerSegment = 360 / count;
-            const randomSegment = Math.floor(Math.random() * count);
-            const targetRotation = wheelRotation + 1800 + (randomSegment * anglePerSegment) + (anglePerSegment / 2);
-
-            wheel.style.transform = `rotate(${targetRotation}deg)`;
-            wheelRotation = targetRotation;
-
-            // Play tick sounds during spin
-            let tickCount = 0;
-            const tickInterval = setInterval(() => {
-                playWheelTick();
-                tickCount++;
-                if (tickCount > 40) clearInterval(tickInterval);
-            }, 80);
-
-            // Show result after spin
-            setTimeout(() => {
-                clearInterval(tickInterval);
-                playWheelStop();
-                playWin();
-
-                const final = pistols[randomSegment];
-                img.src = final.img;
-                name.textContent = currentLang === 'zh' ? final.nameZh : final.nameEn;
-                type.textContent = currentLang === 'zh' ? final.typeZh : final.typeEn;
-
-                wheelContainer.classList.add('hidden');
-                result.classList.remove('hidden');
-                result.classList.add('result-pop');
-                createParticles('pistol-particles', '#22c55e');
-
-                isWheelSpinning = false;
-            }, 4000);
         }
     </script>
 </body>
